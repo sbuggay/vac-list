@@ -1,0 +1,55 @@
+body {
+    font-size: 16px;
+    font-family: Consolas, Monaco, Menlo, monospace;
+    color: #eee;
+    background-color: #273245;
+}
+
+.App {
+    margin: 20px 20px;
+    max-width: 1000px;
+}
+
+.Header {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+input {
+    width: 400px;
+    border: none;
+}
+
+button {
+    margin: 0 0 0 20px;
+    font-size: 14px;
+    border: none;
+    background-color: #eee;
+}
+
+a {
+    color: #eee
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table tr:nth-child(odd) {
+    background: #19202c;
+}
+
+table tr:nth-child(even) {
+    background: #202938;
+}
+
+th {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+td {
+    padding: 10px 12px;
+}
