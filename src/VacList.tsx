@@ -1,28 +1,11 @@
 import * as React from 'react';
 
 import Input from "./Input";
-import SteamApi from "./steam/SteamApi";
-
-interface IPlayer {
-    CommunityBanned: boolean;
-    DaysSinceLastBan: number;
-    EconomyBan: string;
-    NumberOfGameBans: number;
-    NumberOfVACBans: number;
-    SteamId: string;
-    VACBanned: boolean;
-    dateAdded: number;
-}
-
-interface ISummary {
-    personaname: string;
-    profileurl: string;
-    avatar: string;
-}
+import SteamApi, { IPlayerBan, IPlayerSummary } from "./steam/SteamApi";
 
 interface IVacList {
-    players: IPlayer[];
-    summaries: { [key: string]: ISummary }
+    players: IPlayerBan[];
+    summaries: { [key: string]: IPlayerSummary }
 }
 
 class VacList extends React.Component<any, IVacList> {
@@ -33,6 +16,9 @@ class VacList extends React.Component<any, IVacList> {
         super(props);
 
         this.steamApi = new SteamApi();
+
+        this.handleExport = this.handleExport.bind(this);
+        this.handleResolve = this.handleResolve.bind(this);
 
         this.state = {
             players: [],
@@ -51,21 +37,61 @@ class VacList extends React.Component<any, IVacList> {
                 players: json.players,
                 summaries: this.state.summaries
             });
+        }).catch(e => {
+            console.error(e);
         });
+    }
+
+    public handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        let ids = localStorage.getItem("vaclist");
+        if (!ids) {
+            ids = JSON.stringify([]);
+        }
+        const parsedIds = JSON.parse(ids);
+        const submittedId = (e.target as any).id.value;
+
+        if (!submittedId) {
+            return false;
+        }
+
+        parsedIds.push(submittedId);
+        localStorage.setItem("vaclist", JSON.stringify(parsedIds));
+
+        this.setState({
+            players: parsedIds,
+            summaries: this.state.summaries
+        });
+
+        return false;
     }
 
     public render() {
         const players = this.state.players;
 
         const playerElements = players.map((player, index) => {
-            return (
-                <tr key={index}>
-                    <td><a href={`https://steamcommunity.com/profiles/${player.SteamId}`}>{player.SteamId}</a></td>
-                    <td>{player.CommunityBanned ? "true" : "false"}</td>
-                    <td>{player.VACBanned ? "true" : "false"}</td>
-                    <td>{player.EconomyBan}</td>
-                </tr>
-            );
+            if (this.state.summaries[player.SteamId]) {
+                const playerSummary = this.state.summaries[player.SteamId];
+                return (
+                    <tr key={index}>
+                        <td><a href={`https://steamcommunity.com/profiles/${player.SteamId}`}>{playerSummary.personaname}</a></td>
+                        <td>{player.CommunityBanned ? "true" : "false"}</td>
+                        <td>{player.VACBanned ? "true" : "false"}</td>
+                        <td>{player.EconomyBan}</td>
+                    </tr>
+                );
+            }
+            else {
+                return (
+                    <tr key={index}>
+                        <td><a href={`https://steamcommunity.com/profiles/${player.SteamId}`}>{player.SteamId}</a></td>
+                        <td>{player.CommunityBanned ? "true" : "false"}</td>
+                        <td>{player.VACBanned ? "true" : "false"}</td>
+                        <td>{player.EconomyBan}</td>
+                    </tr>
+                );
+            }
+
         });
 
         let comBanned = 0;
@@ -79,14 +105,13 @@ class VacList extends React.Component<any, IVacList> {
         });
 
         return (
-
             <div>
-
                 <div className="Header">
-                    <Input />
+                    <Input handleSubmit={this.handleSubmit} />
                     <div>
+                        <button onClick={this.handleResolve}>Resolve</button>
                         <button>Import</button>
-                        <button>Export</button>
+                        <button onClick={this.handleExport}>Export</button>
                     </div>
                 </div>
                 <table>
@@ -104,6 +129,24 @@ class VacList extends React.Component<any, IVacList> {
                 </table>
             </div>
         );
+    }
+
+    private handleExport() {
+        alert(JSON.stringify(this.state));
+    }
+
+    private handleResolve() {
+        const steamids = this.state.players.map(player => player.SteamId);
+        this.steamApi.getPlayerSummaries(steamids).then(response => {
+            const summaries = {};
+            response.response.players.forEach(player => {
+                summaries[player.steamid] = player;
+            });
+            this.setState({
+                players: this.state.players,
+                summaries
+            });
+        });
     }
 }
 
