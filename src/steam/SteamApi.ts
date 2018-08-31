@@ -38,7 +38,7 @@ export interface IPlayerBans {
 }
 
 export default class SteamApi {
-    public getPlayerSummaries(ids: string[]): Promise<IPlayerSummaries> {
+    public static getPlayerSummaries(ids: string[]): Promise<IPlayerSummaries> {
         if (ids.length === 0) {
             return Promise.resolve({ response: { players: [] } });
         }
@@ -46,7 +46,7 @@ export default class SteamApi {
         return fetch(apiUrl).then(res => res.json());
     }
 
-    public getPlayerBans(ids: string[]): Promise<IPlayerBans> {
+    public static getPlayerBans(ids: string[]): Promise<IPlayerBans> {
         if (ids.length === 0) {
             return Promise.resolve({ players: [] });
         }
