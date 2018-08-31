@@ -13,6 +13,12 @@ interface IVacList {
     summaries: { [key: string]: IPlayerSummary }
 }
 
+/**
+ * Driving smart component for the app.
+ *
+ * @class VacList
+ * @extends {React.Component<any, IVacList>}
+ */
 class VacList extends React.Component<any, IVacList> {
 
     public constructor(props: any) {
@@ -87,10 +93,12 @@ class VacList extends React.Component<any, IVacList> {
         }
         const state = JSON.parse(vaclist) as IVacList;
         SteamApi.getPlayerBans(state.ids).then(json => {
-            console.log(json);
-            this.setState(Object.assign(state, {
-                players: json.players
-            }));
+            // we want this to be in the same order as the id list
+            const players = json.players;
+            players.sort((a, b) => {
+                return (state.ids.indexOf(a.SteamId) > state.ids.indexOf(b.SteamId)) ? 1 : -1;
+            });
+            this.setState(Object.assign(state, { players }));
         });
     }
 
