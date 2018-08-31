@@ -14,16 +14,25 @@ body {
 .App {
   margin: 20px 20px;
   max-width: 1000px;
+  margin: 0 auto;
 }
 
 .Header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 20px 0;
 }
 
+.Input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+}
+
 input {
-  width: 400px;
+  flex-grow: 1;
   border: none;
 }
 
@@ -32,6 +41,7 @@ button {
   font-size: 14px;
   border: none;
   background-color: #eee;
+  cursor: "";
 }
 
 a {
@@ -72,5 +82,5 @@ td i {
 }
 
 .Legend i {
-  padding: 0 5px 0 20px;
+  padding: 0 10px 0 20px;
 }
