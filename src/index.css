@@ -36,11 +36,13 @@ input {
   border: none;
 }
 
-button {
+.Header button {
   margin: 0 0 0 20px;
   font-size: 14px;
   border: none;
   background-color: #eee;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: "";
 }
 
@@ -51,6 +53,11 @@ a {
 table {
   width: 100%;
   border-collapse: collapse;
+}
+
+tbody {
+  height: 100px;
+  overflow-y: scroll;
 }
 
 table tr:nth-child(odd) {
@@ -74,7 +81,7 @@ td {
 td img {
   width: 20px;
   height: 20px;
-  padding-right: 10px;
+  margin-right: 10px;
 }
 
 td i {

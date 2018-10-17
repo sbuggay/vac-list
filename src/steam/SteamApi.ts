@@ -23,7 +23,7 @@ export interface IPlayerSummaries {
     }
 }
 
-export interface IPlayerBan {
+export interface IPlayerStatus {
     SteamId: string;
     CommunityBanned: boolean;
     VACBanned: boolean;
@@ -31,10 +31,6 @@ export interface IPlayerBan {
     DaysSinceLastBan: number;
     NumberOfGameBans: number;
     EconomyBan: string;
-}
-
-export interface IPlayerBans {
-    players: IPlayerBan[];
 }
 
 export default class SteamApi {
@@ -46,7 +42,7 @@ export default class SteamApi {
         return fetch(apiUrl).then(res => res.json());
     }
 
-    public static getPlayerBans(ids: string[]): Promise<IPlayerBans> {
+    public static getPlayerBans(ids: string[]): Promise<any> {
         if (ids.length === 0) {
             return Promise.resolve({ players: [] });
         }
